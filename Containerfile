@@ -49,6 +49,3 @@ RUN set -eux; \
   sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Bluefin DX nvidia 580 LTS (${NEW_VERSION})\"/" /usr/lib/os-release; \
   sed -i "s/^VARIANT_ID=.*/VARIANT_ID=bluefin-dx-nvidia-580-lts/" /usr/lib/os-release; \
   sed -i "s|^HOME_URL=.*|HOME_URL=\"https://github.com/serandel/bluefin-dx-580-lts\"|" /usr/lib/os-release
-
-# Standard ostree container commit
-RUN ostree container commit
