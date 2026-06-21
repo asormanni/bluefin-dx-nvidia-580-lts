@@ -88,20 +88,31 @@ jobs:
           types: ${{ matrix.disk-type }}
           rootfs: btrfs
           additional-args: --use-librepo=True
-          
-      - name: Rename output file
+
+      - name: Rename and compress output file
         run: |
-          # Entriamo nella cartella dove il builder ha salvato i file
           cd ${{ steps.build.outputs.output-directory }}
-          
-          # Generiamo la data di oggi per avere un riferimento chiaro (es. 20260621)
           TIMESTAMP=$(date +%Y%m%d)
           
-          # Cerchiamo il file in base al tipo e lo rinominiamo
           if [ "${{ matrix.disk-type }}" == "anaconda-iso" ]; then
+            # Trova, rinomina e sposta la ISO
             find . -name "*.iso" -exec mv {} ./${{ env.IMAGE_NAME }}-${TIMESTAMP}.iso \;
+            
+            # Comprime la ISO in formato XZ (molto efficiente per superare il blocco dei 2GB)
+            tar -cJf ${{ env.IMAGE_NAME }}-${TIMESTAMP}.iso.tar.xz ${{ env.IMAGE_NAME }}-${TIMESTAMP}.iso
+            
+            # Cancella la ISO originale non compressa per evitare che GitHub cerchi di caricarla
+            rm ${{ env.IMAGE_NAME }}-${TIMESTAMP}.iso
+            
           elif [ "${{ matrix.disk-type }}" == "qcow2" ]; then
+            # Trova, rinomina e sposta il QCOW2
             find . -name "*.qcow2" -exec mv {} ./${{ env.IMAGE_NAME }}-${TIMESTAMP}.qcow2 \;
+            
+            # Comprime il QCOW2 in formato XZ
+            tar -cJf ${{ env.IMAGE_NAME }}-${TIMESTAMP}.qcow2.tar.xz ${{ env.IMAGE_NAME }}-${TIMESTAMP}.qcow2
+            
+            # Cancella il QCOW2 originale non compresso
+            rm ${{ env.IMAGE_NAME }}-${TIMESTAMP}.qcow2
           fi
 
       - name: Upload disk images and Checksum to Job Artifacts
