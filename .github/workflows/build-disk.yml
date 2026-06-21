@@ -141,13 +141,4 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rclone
           rclone copy $SOURCE_DIR S3:${{ secrets.S3_BUCKET_NAME }}
-    
-      - name: Publish to GitHub Releases
-        if: inputs.upload-to-s3 != true && github.event_name != 'pull_request'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: "Bluefin DX Nvidia 580 LTS (Latest Build)"
-          body: "Automated build of Bluefin DX with Nvidia 580 LTS drivers. Contains bootable ISO and QCOW2 disk images."
-          files: ${{ steps.build.outputs.output-directory }}/*
-          make_latest: true
+ 
