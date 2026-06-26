@@ -4,7 +4,7 @@
 
 ARG BASE_IMAGE=ghcr.io/ublue-os/bluefin-dx
 
-FROM ${BASE_IMAGE}:stable
+FROM ${BASE_IMAGE}:latest
 
 RUN set -eux; \
   KVER=$(rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}'); \
@@ -21,8 +21,13 @@ RUN set -eux; \
   cd /etc/yum.repos.d; \
   wget https://negativo17.org/repos/fedora-nvidia-580.repo; \
   dnf config-manager setopt fedora-nvidia-580.priority=90; \
+  # packages
   dnf install --disablerepo="fedora-multimedia" -y --setopt=tsflags=noscripts \
-    nvidia-driver akmod-nvidia nvidia-settings nvidia-driver-libs.i686; \
+    nvidia-driver akmod-nvidia nvidia-settings nvidia-driver-libs.i686 \ 
+    pass \
+    qemu \
+    waydroid waydroid-selinux \
+    ; \
   chmod 1777 /tmp; \
   echo; \
   mkdir -p /var/lib/akmods; \
